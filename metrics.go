@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -23,6 +24,7 @@ type Metrics struct {
 
 	heights     *prometheus.CounterVec
 	lastHeights map[string]float64
+	mutex       sync.Mutex
 }
 
 func NewMetrics(reg prometheus.Registerer) *Metrics {
@@ -87,6 +89,9 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string) {
 			return err
 		}
 
+		m.mutex.Lock()
+		defer m.mutex.Unlock()
+
 		if t := state.L2.Timestamp - m.lastTimestamps["seq"]; t > 0 {
 			m.timestamps.With(prometheus.Labels{"svc_name": "seq"}).Add(t)
 			m.lastTimestamps["seq"] += t
@@ -146,6 +151,9 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string) {
 		if err := json.NewDecoder(resp.Body).Decode(&state); err != nil {
 			return err
 		}
+
+		m.mutex.Lock()
+		defer m.mutex.Unlock()
 
 		if t := state.Height - m.lastHeights["node"]; t > 0 {
 			m.heights.With(prometheus.Labels{"svc_name": "node"}).Add(t)
