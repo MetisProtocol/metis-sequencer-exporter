@@ -89,15 +89,18 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string) {
 
 		if t := state.L2.Timestamp - m.lastTimestamps["seq"]; t > 0 {
 			m.timestamps.With(prometheus.Labels{"svc_name": "seq"}).Add(t)
+			m.lastTimestamps["seq"] += t
 		}
 
 		if t := state.L2.BlockNumber - m.lastHeights["seq"]; t > 0 {
 			m.heights.With(prometheus.Labels{"svc_name": "seq"}).Add(t)
+			m.lastHeights["seq"] += t
 		}
 
 		if state.MPC != nil && state.MPC.IsMpcProposer == 1 {
 			if t := state.MPC.Timestamp - m.lastTimestamps["mpc"]; t > 0 {
 				m.timestamps.With(prometheus.Labels{"svc_name": "mpc"}).Add(t)
+				m.lastTimestamps["mpc"] += t
 			}
 
 			m.mpc_state.Set(float64(state.MPC.SignSuccess))
@@ -146,6 +149,7 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string) {
 
 		if t := state.Height - m.lastHeights["node"]; t > 0 {
 			m.heights.With(prometheus.Labels{"svc_name": "node"}).Add(t)
+			m.lastHeights["node"] += t
 		}
 		return nil
 	}
