@@ -1,0 +1,16 @@
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+rule_files:
+  - "rules/*.yml"
+
+scrape_configs:
+  - job_name: "metis-sequencer-exporter"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["metis-sequencer-exporter:21012"]
+        labels:
+          network_name: "metis-sepolia"
+          sequencer_name: "seq-0"

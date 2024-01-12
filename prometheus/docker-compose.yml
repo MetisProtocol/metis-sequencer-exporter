@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  metis-sequencer-exporter:
+    image: ghcr.io/metisprotocol/metis-sequencer-exporter:main
+    pull_policy: always
+    ports:
+      - 21012:21012
+    command:
+      - -url.state.seq
+      - http://PLACEHOLDER:9545/health
+      - -url.state.node
+      - http://PLACEHOLDER:1317/metis/latest-span
+  prometheus:
+    image: prom/prometheus:v2.45.2
+    ports:
+      - 9090:9090
+    user: root
+    depends_on:
+      - metis-sequencer-exporter
+    command:
+      - --config.file=/config/prometheus.yml
+      - --storage.tsdb.path=/data
+      - --storage.tsdb.retention.time=3d
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+    volumes:
+      - ./config:/config:ro
+      - ./data/prometheus:/data
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    ports:
+      - 9093:9093
+    user: root
+    command:
+      - --config.file=/config/alertmanager.yml
+      - --storage.path=/data
+    depends_on:
+      - prometheus
+    volumes:
+      - ./config:/config:ro
+      - ./data/alertmanager:/data
