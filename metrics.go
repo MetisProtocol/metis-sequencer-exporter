@@ -89,6 +89,8 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string) {
 			return err
 		}
 
+		log.Println("seq:height", state.L2.BlockNumber, "seq:timetamp", state.L2.Timestamp)
+
 		m.mutex.Lock()
 		defer m.mutex.Unlock()
 
@@ -103,6 +105,8 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string) {
 		}
 
 		if state.MPC != nil && state.MPC.IsMpcProposer == 1 {
+			log.Println("mpc:timestmap", state.MPC.Timestamp, "mpc:signSuccess", state.MPC.SignSuccess)
+
 			if t := state.MPC.Timestamp - m.lastTimestamps["mpc"]; t > 0 {
 				m.timestamps.With(prometheus.Labels{"svc_name": "mpc"}).Add(t)
 				m.lastTimestamps["mpc"] += t
@@ -152,6 +156,7 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string) {
 			return err
 		}
 
+		log.Println("node:height", state.Height)
 		m.mutex.Lock()
 		defer m.mutex.Unlock()
 
