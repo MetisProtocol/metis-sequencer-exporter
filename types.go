@@ -52,5 +52,5 @@ type NodeHealthResp struct {
 }
 
 type LastestSpanResp struct {
-	Height float64 `json:"heigth,string"`
+	Height float64 `json:"height,string"`
 }
