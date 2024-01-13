@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os/signal"
@@ -34,14 +35,17 @@ func main() {
 
 	server := &http.Server{Addr: ":21012"}
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
+	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, "pong") })
 
 	go func() {
-		<-basectx.Done()
-		_ = server.Shutdown(context.Background())
+		log.Println("serving")
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			cancel()
+			log.Println(err)
+		}
 	}()
 
-	log.Println("serving")
-	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		panic(err)
-	}
+	<-basectx.Done()
+	log.Println("graceful stopping")
+	_ = server.Shutdown(context.Background())
 }
