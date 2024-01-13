@@ -12,14 +12,14 @@ groups:
       - alert: MPCNoSignForLong
         expr: time() - metis:sequencer:timestamp{svc_name="mpc"} > 3600
         labels:
-          severity: high
+          severity: medium
         annotations:
           summary: "MPC has not signed in the past hour"
           description: ""
       - alert: MPCSignFailure
         expr: metis:sequencer:mpc:state == 0
         labels:
-          severity: high
+          severity: critical
         annotations:
           summary: "MPC signing failed"
           description: "the last signature is not correct to use"
