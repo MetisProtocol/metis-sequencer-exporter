@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -15,12 +16,14 @@ import (
 
 func main() {
 	var (
-		SeqStateURL  string
-		NodeStateURL string
+		SeqStateURL    string
+		NodeStateURL   string
+		ScrapeInterval time.Duration
 	)
 
 	flag.StringVar(&SeqStateURL, "url.state.seq", "http://localhost:9545/health", "the sequencer state url")
 	flag.StringVar(&NodeStateURL, "url.state.node", "http://localhost:1317/metis/latest-span", "the node state url")
+	flag.DurationVar(&ScrapeInterval, "scrape.interval", time.Second*15, "scrape interval")
 	flag.Parse()
 
 	basectx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -30,8 +33,8 @@ func main() {
 
 	metrics := NewMetrics(reg)
 
-	go metrics.ScrapeSequencerState(basectx, SeqStateURL)
-	go metrics.ScrapeNodeState(basectx, NodeStateURL)
+	go metrics.ScrapeSequencerState(basectx, SeqStateURL, ScrapeInterval)
+	go metrics.ScrapeNodeState(basectx, NodeStateURL, ScrapeInterval)
 
 	server := &http.Server{Addr: ":21012"}
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))

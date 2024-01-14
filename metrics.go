@@ -65,7 +65,7 @@ func NewMetrics(reg prometheus.Registerer) *Metrics {
 	return m
 }
 
-func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string) {
+func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string, scrapeInterval time.Duration) {
 	ticker := time.NewTimer(0)
 	defer ticker.Stop()
 
@@ -127,12 +127,12 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string) {
 				m.scrape_failures.With(prometheus.Labels{"url": url}).Inc()
 				log.Println("Failed to scrape sequencer state", err)
 			}
-			ticker.Reset(time.Minute)
+			ticker.Reset(scrapeInterval)
 		}
 	}
 }
 
-func (m *Metrics) ScrapeNodeState(basectx context.Context, url string) {
+func (m *Metrics) ScrapeNodeState(basectx context.Context, url string, scrapeInterval time.Duration) {
 	ticker := time.NewTimer(0)
 	defer ticker.Stop()
 
@@ -176,7 +176,7 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string) {
 				m.scrape_failures.With(prometheus.Labels{"url": url}).Inc()
 				log.Println("Failed to scrape the node state", err)
 			}
-			ticker.Reset(time.Minute)
+			ticker.Reset(scrapeInterval)
 		}
 	}
 }
