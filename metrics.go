@@ -104,17 +104,21 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string, scra
 			m.lastHeights["seq"] += t
 		}
 
-		if state.MPC != nil && state.MPC.IsMpcProposer == 1 {
-			log.Println("mpc:timestmap", state.MPC.Timestamp, "mpc:signSuccess", state.MPC.SignSuccess)
+		if state.MPC != nil {
+			if state.MPC.IsMpcProposer == 1 {
+				log.Println("mpc:timestmap", state.MPC.Timestamp, "mpc:signSuccess", state.MPC.SignSuccess)
 
-			if t := state.MPC.Timestamp - m.lastTimestamps["mpc"]; t > 0 {
-				m.timestamps.With(prometheus.Labels{"svc_name": "mpc"}).Add(t)
-				m.lastTimestamps["mpc"] += t
+				if t := state.MPC.Timestamp - m.lastTimestamps["mpc"]; t > 0 {
+					m.timestamps.With(prometheus.Labels{"svc_name": "mpc"}).Add(t)
+					m.lastTimestamps["mpc"] += t
+				}
+
+				m.mpc_state.Set(float64(state.MPC.SignSuccess))
+			} else {
+				// No MPC
+				m.mpc_state.Set(1)
 			}
-
-			m.mpc_state.Set(float64(state.MPC.SignSuccess))
 		}
-
 		return nil
 	}
 
