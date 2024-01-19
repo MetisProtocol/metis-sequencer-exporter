@@ -41,7 +41,7 @@ services:
       - ./config:/config:ro
       - ./data/alertmanager:/data
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.7.0
     restart: unless-stopped
     expose:
       - 9100
