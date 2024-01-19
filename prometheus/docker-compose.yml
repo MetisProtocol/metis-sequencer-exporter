@@ -29,8 +29,8 @@ services:
       - ./data/prometheus:/data
   alertmanager:
     image: prom/alertmanager:v0.26.0
-    ports:
-      - 9093:9093
+    expose:
+      - 9093
     user: root
     command:
       - --config.file=/config/alertmanager.yml
@@ -40,3 +40,17 @@ services:
     volumes:
       - ./config:/config:ro
       - ./data/alertmanager:/data
+  node-exporter:
+    image: prom/node-exporter:latest
+    restart: unless-stopped
+    expose:
+      - 9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
