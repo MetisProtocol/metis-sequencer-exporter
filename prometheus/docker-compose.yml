@@ -6,11 +6,14 @@ services:
     pull_policy: always
     ports:
       - 21012:21012
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command:
+      # deploy the exporter on the same instance with your sequencer
       - -url.state.seq
-      - http://PLACEHOLDER:9545/health
+      - http://host.docker.internal:9545/health
       - -url.state.node
-      - http://PLACEHOLDER:1317/metis/latest-span
+      - http://host.docker.internal:1317/metis/latest-span
   prometheus:
     image: prom/prometheus:v2.45.2
     ports:

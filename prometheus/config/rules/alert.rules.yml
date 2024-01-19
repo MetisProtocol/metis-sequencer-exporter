@@ -8,21 +8,18 @@ groups:
           severity: high
         annotations:
           summary: "{{ $labels.svc_name }} has no blocks generated in the past minute"
-          description: "the {{ $labels.svc_name }} service is stuck at {{ $value }}"
       - alert: MPCNoSignForLong
         expr: time() - metis:sequencer:timestamp{svc_name="mpc"} > 3600
         labels:
           severity: medium
         annotations:
           summary: "MPC has not signed in the past hour"
-          description: ""
       - alert: MPCSignFailure
         expr: metis:sequencer:mpc:state == 0
         labels:
           severity: critical
         annotations:
           summary: "MPC signing failed"
-          description: "the last signature is not correct to use"
       - alert: ScrapeFailures
         expr: increase(metis_sequencer_exporter_failures[1m]) > 2
         for: 1m
@@ -30,7 +27,6 @@ groups:
           severity: high
         annotations:
           summary: "Failed to scrape metrics from {{ $labels.url }}"
-          description: "{{ $labels.url }} seems to be down"
   - name: node-exporter
     rules:
       - alert: NodeFilesystemSpaceFillingUp

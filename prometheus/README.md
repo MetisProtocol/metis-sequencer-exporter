@@ -11,16 +11,23 @@ services:
     pull_policy: always
     ports:
       - 21012:21012
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command:
+      # deploy the exporter on the same instance with your sequencer
       - -url.state.seq
-      - http://PLACEHOLDER:9545/health
+      - http://host.docker.internal:9545/health
       - -url.state.node
-      - http://PLACEHOLDER:1317/metis/latest-span
+      - http://host.docker.internal:1317/metis/latest-span
 ```
 
 `-url.state.seq` is for your bridge node
 
 `-url.state.node` is for your rest rpc node
+
+if you want to deploy the exporter on the same instance with your sequencer,
+
+you can use `host.docker.internal` as the host of the url.
 
 ## Setup your prometheus configuration
 
