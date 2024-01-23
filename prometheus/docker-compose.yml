@@ -14,6 +14,8 @@ services:
       - http://host.docker.internal:9545/health
       - -url.state.node
       - http://host.docker.internal:1317/metis/latest-span
+      - -url.state.l1dtl
+      - http://host.docker.internal:7878/eth/context/latest
   prometheus:
     image: prom/prometheus:v2.45.2
     ports:

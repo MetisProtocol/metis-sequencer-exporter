@@ -227,7 +227,7 @@ func (m *Metrics) ScrapeL1DtlState(basectx context.Context, url string, scrapeIn
 		case <-ticker.C:
 			if err := scrape(); err != nil {
 				m.scrape_failures.With(prometheus.Labels{"url": url}).Inc()
-				log.Println("Failed to scrape the node state", err)
+				log.Println("Failed to scrape the l1dtl state", err)
 			}
 			ticker.Reset(scrapeInterval)
 		}
