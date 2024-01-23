@@ -54,3 +54,9 @@ type NodeHealthResp struct {
 type LastestSpanResp struct {
 	Height float64 `json:"height,string"`
 }
+
+type DTLEthContextResp struct {
+	Height    float64 `json:"blockNumber"`
+	Timestamp float64 `json:"timestamp"`
+	BlockHash string  `json:"blockHash"`
+}

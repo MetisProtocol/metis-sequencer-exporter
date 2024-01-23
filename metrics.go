@@ -184,3 +184,52 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string, scrapeInt
 		}
 	}
 }
+
+func (m *Metrics) ScrapeL1DtlState(basectx context.Context, url string, scrapeInterval time.Duration) {
+	ticker := time.NewTimer(0)
+	defer ticker.Stop()
+
+	scrape := func() error {
+		newctx, cancel := context.WithTimeout(basectx, time.Second*3)
+		defer cancel()
+
+		req, err := http.NewRequestWithContext(newctx, http.MethodGet, url, nil)
+		if err != nil {
+			return err
+		}
+
+		resp, err := m.httpClient.Do(req)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		var state DTLEthContextResp
+		if err := json.NewDecoder(resp.Body).Decode(&state); err != nil {
+			return err
+		}
+
+		log.Println("l1dtl:height", state.Height)
+		m.mutex.Lock()
+		defer m.mutex.Unlock()
+
+		if t := state.Height - m.lastHeights["l1dtl"]; t > 0 {
+			m.heights.With(prometheus.Labels{"svc_name": "l1dtl"}).Add(t)
+			m.lastHeights["l1dtl"] += t
+		}
+		return nil
+	}
+
+	for {
+		select {
+		case <-basectx.Done():
+			return
+		case <-ticker.C:
+			if err := scrape(); err != nil {
+				m.scrape_failures.With(prometheus.Labels{"url": url}).Inc()
+				log.Println("Failed to scrape the node state", err)
+			}
+			ticker.Reset(scrapeInterval)
+		}
+	}
+}
