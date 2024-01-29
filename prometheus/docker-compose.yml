@@ -3,6 +3,7 @@ version: "3.8"
 services:
   metis-sequencer-exporter:
     image: ghcr.io/metisprotocol/metis-sequencer-exporter:main
+    restart: unless-stopped
     pull_policy: always
     ports:
       - 21012:21012
@@ -18,6 +19,7 @@ services:
       - http://host.docker.internal:7878/eth/context/latest
   prometheus:
     image: prom/prometheus:v2.45.2
+    restart: unless-stopped
     ports:
       - 9090:9090
     user: root
@@ -34,6 +36,7 @@ services:
       - ./data/prometheus:/data
   alertmanager:
     image: prom/alertmanager:v0.26.0
+    restart: unless-stopped
     expose:
       - 9093
     user: root
