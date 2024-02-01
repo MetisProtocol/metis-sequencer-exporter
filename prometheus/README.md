@@ -19,11 +19,15 @@ services:
       - http://host.docker.internal:9545/health
       - -url.state.node
       - http://host.docker.internal:1317/metis/latest-span
+      - -url.state.l1dtl
+      - http://host.docker.internal:7878/eth/context/latest
 ```
 
 `-url.state.seq` is for your bridge node
 
 `-url.state.node` is for your rest rpc node
+
+`-url.state.l1dtl` is for your dtl service
 
 if you want to deploy the exporter on the same instance with your sequencer,
 
@@ -53,6 +57,8 @@ scrape_configs:
 You can add the sequencer_name label if you have multi-nodes.
 
 ## Setup your AlertManager configuration
+
+if you want to use your custom receiver like slack and email, please refer to https://prometheus.io/docs/alerting/latest/configuration/
 
 ```yaml
 receivers:
