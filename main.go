@@ -17,13 +17,13 @@ import (
 func main() {
 	var (
 		SeqStateURL    string
-		NodeStateURL   string
+		PosStateURL    string
 		L1DtlURL       string
 		ScrapeInterval time.Duration
 	)
 
 	flag.StringVar(&SeqStateURL, "url.state.seq", "http://host.docker.internal:9545/health", "the sequencer state url")
-	flag.StringVar(&NodeStateURL, "url.state.node", "http://host.docker.internal:1317/metis/latest-span", "the node state url")
+	flag.StringVar(&PosStateURL, "url.state.node", "http://host.docker.internal:1317/metis/latest-span", "the pos state url")
 	flag.StringVar(&L1DtlURL, "url.state.l1dtl", "http://host.docker.internal:7878/eth/context/latest", "the L1 DTL state url")
 	flag.DurationVar(&ScrapeInterval, "scrape.interval", time.Second*15, "scrape interval")
 	flag.Parse()
@@ -36,7 +36,7 @@ func main() {
 	metrics := NewMetrics(reg)
 
 	go metrics.ScrapeSequencerState(basectx, SeqStateURL, ScrapeInterval)
-	go metrics.ScrapeNodeState(basectx, NodeStateURL, ScrapeInterval)
+	go metrics.ScrapePosState(basectx, PosStateURL, ScrapeInterval)
 	go metrics.ScrapeL1DtlState(basectx, L1DtlURL, ScrapeInterval)
 
 	server := &http.Server{Addr: ":21012"}

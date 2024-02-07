@@ -136,7 +136,7 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string, scra
 	}
 }
 
-func (m *Metrics) ScrapeNodeState(basectx context.Context, url string, scrapeInterval time.Duration) {
+func (m *Metrics) ScrapePosState(basectx context.Context, url string, scrapeInterval time.Duration) {
 	ticker := time.NewTimer(0)
 	defer ticker.Stop()
 
@@ -160,13 +160,13 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string, scrapeInt
 			return err
 		}
 
-		log.Println("node:height", int64(state.Height))
+		log.Println("pos:height", int64(state.Height))
 		m.mutex.Lock()
 		defer m.mutex.Unlock()
 
-		if t := state.Height - m.lastHeights["node"]; t > 0 {
-			m.heights.With(prometheus.Labels{"svc_name": "node"}).Add(t)
-			m.lastHeights["node"] += t
+		if t := state.Height - m.lastHeights["pos"]; t > 0 {
+			m.heights.With(prometheus.Labels{"svc_name": "pos"}).Add(t)
+			m.lastHeights["pos"] += t
 		}
 		return nil
 	}
@@ -178,7 +178,7 @@ func (m *Metrics) ScrapeNodeState(basectx context.Context, url string, scrapeInt
 		case <-ticker.C:
 			if err := scrape(); err != nil {
 				m.scrape_failures.With(prometheus.Labels{"url": url}).Inc()
-				log.Println("Failed to scrape the node state", err)
+				log.Println("Failed to scrape the pos state", err)
 			}
 			ticker.Reset(scrapeInterval)
 		}
