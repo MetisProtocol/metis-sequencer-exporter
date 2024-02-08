@@ -70,7 +70,7 @@ func (m *Metrics) ScrapeSequencerState(basectx context.Context, url string, scra
 	defer ticker.Stop()
 
 	scrape := func() error {
-		newctx, cancel := context.WithTimeout(basectx, time.Second*3)
+		newctx, cancel := context.WithTimeout(basectx, time.Second*15)
 		defer cancel()
 
 		req, err := http.NewRequestWithContext(newctx, http.MethodGet, url, nil)
@@ -141,7 +141,7 @@ func (m *Metrics) ScrapePosState(basectx context.Context, url string, scrapeInte
 	defer ticker.Stop()
 
 	scrape := func() error {
-		newctx, cancel := context.WithTimeout(basectx, time.Second*3)
+		newctx, cancel := context.WithTimeout(basectx, time.Second*15)
 		defer cancel()
 
 		req, err := http.NewRequestWithContext(newctx, http.MethodGet, url, nil)
@@ -190,7 +190,7 @@ func (m *Metrics) ScrapeL1DtlState(basectx context.Context, url string, scrapeIn
 	defer ticker.Stop()
 
 	scrape := func() error {
-		newctx, cancel := context.WithTimeout(basectx, time.Second*3)
+		newctx, cancel := context.WithTimeout(basectx, time.Second*15)
 		defer cancel()
 
 		req, err := http.NewRequestWithContext(newctx, http.MethodGet, url, nil)
