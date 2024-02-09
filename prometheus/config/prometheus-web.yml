@@ -1,0 +1,4 @@
+basic_auth_users:
+  # Usernames and hashed passwords that have full access to the web server via basic authentication.
+  # you can use https://bcrypt-generator.com/ to generate your password
+  admin: "$2a$12$/URNoeIEVn0IdOqjO3QcxOmOH6lVSJ61uGMKmfkXD/.rq2rbNjFYe"

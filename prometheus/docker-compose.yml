@@ -27,8 +27,9 @@ services:
       - metis-sequencer-exporter
     command:
       - --config.file=/config/prometheus.yml
+      - --web.config.file=/config/prometheus-web.yml
       - --storage.tsdb.path=/data
-      - --storage.tsdb.retention.time=3d
+      - --storage.tsdb.retention.time=1d
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
     volumes:

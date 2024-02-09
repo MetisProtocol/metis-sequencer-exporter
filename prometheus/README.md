@@ -33,7 +33,7 @@ if you want to deploy the exporter on the same instance with your sequencer,
 
 you can use `host.docker.internal` as the host of the url.
 
-## Setup your prometheus configuration
+## Setup your prometheus configuration with `./config/prometheus.yml` file
 
 ```yaml
 alerting:
@@ -51,10 +51,19 @@ scrape_configs:
       - targets: ["metis-sequencer-exporter:21012"]
         labels:
           network_name: "metis-sepolia"
-          sequencer_name: "seq-0"
+          sequencer_name: "__YOUR_SEQUENCER_NAME__"
 ```
 
 You can add the sequencer_name label if you have multi-nodes.
+
+## Add basic auth for for your prometheus in `./config/prometheus-web.yml` file
+
+```yml
+basic_auth_users:
+  # Usernames and hashed passwords that have full access to the web server via basic authentication.
+  # you can use https://bcrypt-generator.com/ to generate the password
+  admin: "$2a$12$/URNoeIEVn0IdOqjO3QcxOmOH6lVSJ61uGMKmfkXD/.rq2rbNjFYe"
+```
 
 ## Setup your AlertManager configuration
 
