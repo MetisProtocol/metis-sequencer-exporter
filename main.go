@@ -25,7 +25,7 @@ func main() {
 	flag.StringVar(&SeqStateURL, "url.state.seq", "http://host.docker.internal:9545/health", "the sequencer state url")
 	flag.StringVar(&PosStateURL, "url.state.node", "http://host.docker.internal:1317/metis/latest-span", "the pos state url")
 	flag.StringVar(&L1DtlURL, "url.state.l1dtl", "http://host.docker.internal:7878/eth/context/latest", "the L1 DTL state url")
-	flag.DurationVar(&ScrapeInterval, "scrape.interval", time.Second*15, "scrape interval")
+	flag.DurationVar(&ScrapeInterval, "scrape.interval", time.Second*5, "scrape interval")
 	flag.Parse()
 
 	basectx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
