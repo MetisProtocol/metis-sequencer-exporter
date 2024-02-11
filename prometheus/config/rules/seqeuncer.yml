@@ -3,8 +3,7 @@ groups:
     interval: 1m
     rules:
       - alert: ChainStalled
-        expr: increase(metis:sequencer:height[1m]) == 0
-        for: 5m
+        expr: increase(metis:sequencer:height[3m]) == 0
         labels:
           severity: high
         annotations:
@@ -23,8 +22,8 @@ groups:
           summary: "MPC signing failed"
       - alert: ScrapeFailures
         expr: increase(metis_sequencer_exporter_failures[1m]) > 2
-        for: 5m
+        for: 3m
         labels:
           severity: high
         annotations:
-          summary: "Failed to scrape metrics from {{ $labels.url }}"
+          summary: "Failed to scrape metrics from {{ $labels.url }}, see the exporter log to fix it"
